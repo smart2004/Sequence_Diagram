@@ -1,5 +1,4 @@
 @startuml
-
 !theme plain
 participant "Оператор\n" as Operator
 participant "Инспекционная установка\n'Малиновка'" as System
