@@ -1,0 +1,97 @@
+@startuml
+
+!theme plain
+participant "Оператор\n" as Operator
+participant "Инспекционная установка\n'Малиновка'" as System
+participant "Камера\n" as Camera
+participant "Узел удержания\nобразца" as Stage
+
+group 1. Инициализация
+    Operator -> System: Проверка изделия
+end
+
+group 2. Ввод данных для сшивки изображений
+    Operator -> System: Настройка данных для сшивки изображений
+    System -> System: Алгоритм сшивки изображений
+    System -> System: Шаг сетки X-ось
+    System -> System: Шаг сетки Y-ось
+    System -> System: Размер разметки
+    System -> System: Приоритет
+    System -> System: Минимальное количество точек для преобразования
+    
+ /'   Operator -> System: Настройка камеры
+    System -> Camera: Ширина поля зрения
+    System -> Camera: Высота поля зрения
+    System -> Camera: Размер пикселя
+    System -> Camera: Настройка угла поворота
+'/
+end
+
+group 3. Новая сессия
+    
+    group 3.1. Рецепт
+        group 3.1.1. Создание рецепта
+            Operator -> System: Настройка карты образца (device ID)
+            System -> System: Расчет сетки образца (количество строк)
+            System -> System: Расчет сетки образца (количество столбцов)
+            Operator -> System: Указание точек привязки кристалла
+            Operator -> System: Указание линий разметки
+        end
+        Operator -> System: 3.1.2. Выбор рецепта
+    end
+
+    group 3.2. Нахождение центра образца
+        Operator -> System: Нахождение центра образца
+    end
+
+    group 3.3. Первичное выравнивание образца
+        Operator -> System: Указание точек привязки
+        System -> Camera: Выделение изображения для выравнивания
+        Camera --> System: Изображение
+        System -> System: Вычисление угла поворота образца
+        System -> Stage: Поворот образца
+        Stage --> System: Подтверждение поворота
+    end
+
+    group 3.4. Разметка для испытаний
+        System -> System: Формирование данных
+        System -> System: Маскирование краев образца
+    end
+
+    group 3.5. Выравнивание образца (точное)
+        System -> Camera: Выделение двух областей для точного выравнивания
+        Camera --> System: Изображения областей
+        System -> System: Сохранение координат выделенных областей
+        System -> System: Сохранение изображения
+    end
+
+    group 3.6. Маскирование отдельного кристалла
+        System -> System: Базирование по исходному кристаллу в центре
+        Operator -> System: Отметка областей, не предназначенных для инспекции
+        System -> System: Сохранение координат левого верхнего угла
+        System -> System: Сохранение размера маскированной области
+    end
+
+    group 3.7. Валидация
+        System --> Operator: Отображение этапов / подготовленных данных
+    end
+
+    group 3.8. Пуск инспекции образца
+        Operator -> System: Запуск инспекции
+        System -> Camera: Поиск дефектов
+        Camera --> System: Данные о дефектах
+        System --> Operator: Визуализация результатов детекции
+    end
+
+    group 3.9. Просмотр/анализ результатов
+        Operator -> System: Просмотр результатов инспекции
+        System --> Operator: Отображение результатов
+    end
+
+    group 3.10. Анализ
+        Operator -> System: Анализ данных
+        System --> Operator: Результаты анализа
+    end
+end
+
+@enduml
